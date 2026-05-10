@@ -100,9 +100,10 @@ app.use((err, req, res, next) => {
     res.status(500).json({ success: false, message: 'حدث خطأ غير متوقع في السيرفر.' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log('==============================================');
     console.log('  Rolling Draw server is running');
+    console.log(`  Listening on 0.0.0.0:${PORT}`);
     console.log(`  Local:    http://localhost:${PORT}`);
     console.log(`  Register: http://localhost:${PORT}/register`);
     console.log(`  Admin:    http://localhost:${PORT}/admin/login`);
