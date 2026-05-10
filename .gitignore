@@ -1,0 +1,9 @@
+node_modules/
+data/*.db
+data/*.db-journal
+public/qr/*.png
+.env
+*.log
+.DS_Store
+.vscode/
+.idea/

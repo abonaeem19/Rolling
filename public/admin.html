@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>لوحة الإدارة | السحب الإلكتروني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/admin.css" />
+</head>
+<body>
+    <div class="app">
+        <!-- ===== Top bar ===== -->
+        <header class="topbar">
+            <div class="brand">
+                <span class="brand-mark">●</span>
+                <h1>لوحة إدارة السحب</h1>
+            </div>
+            <nav class="topbar-nav">
+                <a href="/roulette" target="_blank" class="nav-link">صفحة العرض</a>
+                <a href="/register" target="_blank" class="nav-link">صفحة التسجيل</a>
+                <button id="logoutBtn" class="nav-btn">تسجيل خروج</button>
+            </nav>
+        </header>
+
+        <!-- ===== Stats cards ===== -->
+        <section class="stats">
+            <div class="stat">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">إجمالي المشاركين</div>
+            </div>
+            <div class="stat win">
+                <div class="stat-value" id="statWinners">0</div>
+                <div class="stat-label">الفائزين</div>
+            </div>
+            <div class="stat pending">
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-label">في الانتظار</div>
+            </div>
+        </section>
+
+        <!-- ===== Main grid ===== -->
+        <main class="grid">
+
+            <!-- Participants card -->
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>المشاركون</h2>
+                    <div class="panel-actions">
+                        <button id="exportCsvBtn" class="btn ghost">تصدير CSV</button>
+                        <button id="exportXlsxBtn" class="btn ghost">تصدير Excel</button>
+                        <button id="refreshBtn" class="btn ghost">تحديث</button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <input id="searchInput" type="search"
+                           placeholder="بحث بالاسم، البريد، أو الرقم الوظيفي..."
+                           class="search-input" />
+                    <div class="filter-group" role="tablist" aria-label="فلتر">
+                        <button class="filter active" data-filter="all">الكل</button>
+                        <button class="filter" data-filter="non-winners">غير الفائزين</button>
+                        <button class="filter" data-filter="winners">الفائزين</button>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الاسم</th>
+                                <th>البريد</th>
+                                <th>الرقم الوظيفي</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participantsBody">
+                            <tr><td colspan="6" class="empty-row">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Side column: Winners log + QR -->
+            <aside class="side">
+                <section class="panel">
+                    <div class="panel-head">
+                        <h2>سجل الفائزين</h2>
+                        <button id="refreshWinnersBtn" class="btn ghost">تحديث</button>
+                    </div>
+                    <ul id="winnersList" class="winners-list">
+                        <li class="empty-row">لا يوجد فائزون بعد.</li>
+                    </ul>
+                </section>
+
+                <section class="panel qr-panel">
+                    <div class="panel-head">
+                        <h2>QR Code</h2>
+                        <button id="loadQrBtn" class="btn ghost">تحميل QR</button>
+                    </div>
+                    <div id="qrBox" class="qr-box">
+                        <div class="qr-placeholder">اضغط "تحميل QR" لعرض رمز التسجيل.</div>
+                    </div>
+                    <p id="qrUrl" class="qr-url"></p>
+                    <a id="qrDownload" href="#" download="register-qr.png" class="btn solid hidden">⬇️ تنزيل QR Code</a>
+                </section>
+            </aside>
+        </main>
+    </div>
+
+    <!-- ===== Edit Modal ===== -->
+    <div id="editModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3>تعديل بيانات المشارك</h3>
+                <button class="modal-close" id="modalCloseBtn">×</button>
+            </div>
+            <form id="editForm" class="modal-form">
+                <input type="hidden" id="edit_id" />
+                <div class="field">
+                    <label for="edit_full_name">الاسم الثلاثي</label>
+                    <input id="edit_full_name" type="text" required maxlength="100" />
+                </div>
+                <div class="field">
+                    <label for="edit_email">البريد الإلكتروني</label>
+                    <input id="edit_email" type="email" required maxlength="254" />
+                </div>
+                <div class="field">
+                    <label for="edit_employee_number">الرقم الوظيفي</label>
+                    <input id="edit_employee_number" type="text" required maxlength="30" />
+                </div>
+                <div id="editMsg" class="modal-msg hidden"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" id="cancelEditBtn">إلغاء</button>
+                    <button type="submit" class="btn solid">حفظ التعديلات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== Toast ===== -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>

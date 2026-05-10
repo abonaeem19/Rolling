@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>السحب الإلكتروني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/roulette.css" />
+</head>
+<body>
+    <div class="stage">
+
+        <!-- Decorative background sparkles -->
+        <div class="bg-glow"></div>
+
+        <!-- Header -->
+        <header class="stage-head">
+            <div class="title-block">
+                <span class="event-tag">السحب الإلكتروني</span>
+                <h1>اختيار الفائز</h1>
+            </div>
+            <div class="counters">
+                <div class="counter">
+                    <span class="counter-value" id="cntPending">—</span>
+                    <span class="counter-label">في الانتظار</span>
+                </div>
+                <div class="counter">
+                    <span class="counter-value" id="cntWinners">—</span>
+                    <span class="counter-label">الفائزون</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Wheel area -->
+        <main class="wheel-area">
+            <div class="wheel-shell">
+                <div class="wheel-pointer" aria-hidden="true">▼</div>
+                <div class="wheel-frame">
+                    <canvas id="wheelCanvas" width="640" height="640"></canvas>
+                    <div class="wheel-hub"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="drawBtn" class="btn-draw">
+                    <span class="btn-icon">🎯</span>
+                    <span class="btn-text">ابدأ السحب</span>
+                </button>
+                <p id="statusText" class="status-text">جاري تجهيز قائمة المشاركين...</p>
+            </div>
+        </main>
+
+        <!-- Recent winners strip -->
+        <aside class="recent-winners">
+            <h3>آخر الفائزين</h3>
+            <ul id="recentList" class="recent-list">
+                <li class="empty">لا يوجد فائزون بعد.</li>
+            </ul>
+        </aside>
+    </div>
+
+    <!-- Winner overlay -->
+    <div id="winnerOverlay" class="winner-overlay hidden" aria-hidden="true">
+        <div class="confetti" id="confettiBox"></div>
+        <div class="winner-card">
+            <div class="winner-tag">🏆 الفائز هو</div>
+            <div id="winnerName" class="winner-name">—</div>
+            <button id="closeOverlay" class="btn-overlay-close">إغلاق ومتابعة</button>
+        </div>
+    </div>
+
+    <script src="/static/js/roulette.js"></script>
+</body>
+</html>

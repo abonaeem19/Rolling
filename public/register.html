@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0a1f44" />
+    <title>تسجيل المشاركين | السحب الإلكتروني</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/register.css" />
+</head>
+<body>
+    <main class="page">
+        <section class="card">
+            <header class="card-head">
+                <div class="badge">السحب الإلكتروني</div>
+                <h1>تسجيل المشاركين</h1>
+                <p class="subtitle">سجّل بياناتك للدخول في السحب على جوائز الفعالية</p>
+            </header>
+
+            <form id="registerForm" class="form" novalidate>
+                <div class="field">
+                    <label for="full_name">الاسم الثلاثي</label>
+                    <input id="full_name" name="full_name" type="text"
+                           autocomplete="name"
+                           placeholder="مثال: محمد أحمد علي"
+                           required minlength="5" maxlength="100" />
+                    <small class="hint">يرجى إدخال الاسم الثلاثي كاملًا</small>
+                </div>
+
+                <div class="field">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input id="email" name="email" type="email"
+                           autocomplete="email" inputmode="email"
+                           placeholder="name@example.com"
+                           required maxlength="254" />
+                </div>
+
+                <div class="field">
+                    <label for="employee_number">الرقم الوظيفي</label>
+                    <input id="employee_number" name="employee_number" type="text"
+                           autocomplete="off"
+                           placeholder="مثال: 12345"
+                           required minlength="2" maxlength="30" />
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-primary">
+                    <span class="btn-label">تسجيل الدخول للسحب</span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <div id="message" class="message hidden" role="status" aria-live="polite"></div>
+        </section>
+
+        <footer class="page-foot">
+            <p>© السحب الإلكتروني للفعالية</p>
+        </footer>
+    </main>
+
+    <script src="/static/js/register.js"></script>
+</body>
+</html>
