@@ -29,6 +29,9 @@ const stmts = {
     nonWinners: db.prepare(`
         SELECT id, full_name FROM participants
          WHERE is_winner = 0
+           AND LOWER(TRIM(full_name)) NOT IN (
+               SELECT LOWER(TRIM(winner_name)) FROM winners
+           )
     `),
     nextRound: db.prepare(`
         SELECT COALESCE(MAX(draw_round), 0) + 1 AS next_round FROM winners

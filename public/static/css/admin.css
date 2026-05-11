@@ -379,3 +379,17 @@ html, body {
     from { transform: translate(-50%, 12px); opacity: 0; }
     to   { transform: translate(-50%, 0);    opacity: 1; }
 }
+
+/* ============ Footer (Made by ACE) ============ */
+.admin-footer {
+    text-align: center;
+    padding: 18px 0 28px;
+    color: var(--text-muted);
+}
+.admin-footer .made-by {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+}

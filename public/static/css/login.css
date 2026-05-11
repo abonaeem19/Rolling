@@ -18,9 +18,20 @@ html, body {
 .login-page {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 24px;
+    gap: 18px;
+}
+
+.login-page .made-by {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 .login-card {

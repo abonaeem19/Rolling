@@ -172,6 +172,16 @@ html, body {
     margin-top: 20px;
     color: var(--text-muted);
     font-size: 12px;
+    text-align: center;
+}
+.page-foot p { margin: 2px 0; }
+.page-foot .made-by {
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--accent);
+    margin-top: 4px;
+    font-size: 11px;
+    text-transform: uppercase;
 }
 
 /* Larger screens */
