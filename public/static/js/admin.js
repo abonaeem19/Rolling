@@ -27,6 +27,10 @@
 
         logoutBtn:   document.getElementById('logoutBtn'),
 
+        seedBtn:        document.getElementById('seedBtn'),
+        clearTestBtn:   document.getElementById('clearTestBtn'),
+        clearAllBtn:    document.getElementById('clearAllBtn'),
+
         modal:       document.getElementById('editModal'),
         modalClose:  document.getElementById('modalCloseBtn'),
         cancelEdit:  document.getElementById('cancelEditBtn'),
@@ -299,6 +303,98 @@
 
     // QR
     els.loadQrBtn.addEventListener('click', loadQr);
+
+    // ---------- Test Tools ----------
+    async function seedParticipants() {
+        const count = prompt('عدد المشاركين التجريبيين المراد اضافتهم؟', '200');
+        if (count === null) return;
+        const n = parseInt(count, 10);
+        if (!Number.isFinite(n) || n <= 0 || n > 1000) {
+            showToast('ادخل عددا بين 1 و 1000', 'error');
+            return;
+        }
+        if (!confirm('سيتم اضافة ' + n + ' مشاركا تجريبيا. هل تريد المتابعة؟')) return;
+
+        els.seedBtn.disabled = true;
+        els.seedBtn.textContent = '... جاري الاضافة';
+        try {
+            const r = await fetch('/api/admin/seed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ count: n })
+            });
+            const j = await r.json();
+            if (j.success) {
+                showToast(j.message, 'success');
+                loadStats();
+                loadParticipants();
+            } else {
+                showToast(j.message || 'تعذر الاضافة', 'error');
+            }
+        } catch (e) {
+            showToast('خطا في الاتصال بالسيرفر', 'error');
+        } finally {
+            els.seedBtn.disabled = false;
+            els.seedBtn.textContent = '+ اضافة 200 مشارك تجريبي';
+        }
+    }
+
+    async function clearTestData() {
+        if (!confirm('سيتم حذف جميع المشاركين الذين يبدا رقمهم الوظيفي بـ TEST-. هل تريد المتابعة؟')) return;
+
+        els.clearTestBtn.disabled = true;
+        try {
+            const r = await fetch('/api/admin/clear-test', { method: 'POST' });
+            const j = await r.json();
+            if (j.success) {
+                showToast(j.message, 'success');
+                loadStats();
+                loadParticipants();
+                loadWinners();
+            } else {
+                showToast(j.message || 'تعذر الحذف', 'error');
+            }
+        } catch (e) {
+            showToast('خطا في الاتصال بالسيرفر', 'error');
+        } finally {
+            els.clearTestBtn.disabled = false;
+        }
+    }
+
+    async function clearAllData() {
+        if (!confirm('تحذير: سيتم حذف جميع المشاركين والفائزين بدون استثناء. هل انت متاكد؟')) return;
+        const confirmText = prompt('للتاكيد، اكتب: DELETE-ALL');
+        if (confirmText !== 'DELETE-ALL') {
+            showToast('تم الالغاء (نص التاكيد غير مطابق)', 'error');
+            return;
+        }
+
+        els.clearAllBtn.disabled = true;
+        try {
+            const r = await fetch('/api/admin/clear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ confirm: 'DELETE-ALL' })
+            });
+            const j = await r.json();
+            if (j.success) {
+                showToast(j.message, 'success');
+                loadStats();
+                loadParticipants();
+                loadWinners();
+            } else {
+                showToast(j.message || 'تعذر الحذف', 'error');
+            }
+        } catch (e) {
+            showToast('خطا في الاتصال بالسيرفر', 'error');
+        } finally {
+            els.clearAllBtn.disabled = false;
+        }
+    }
+
+    if (els.seedBtn)      els.seedBtn.addEventListener('click', seedParticipants);
+    if (els.clearTestBtn) els.clearTestBtn.addEventListener('click', clearTestData);
+    if (els.clearAllBtn)  els.clearAllBtn.addEventListener('click', clearAllData);
 
     // Logout
     els.logoutBtn.addEventListener('click', async () => {

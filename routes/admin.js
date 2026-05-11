@@ -99,4 +99,139 @@ router.get('/qr', requireAdminAPI, async (req, res) => {
     }
 });
 
+// ============================================================
+// POST /api/admin/seed  -> insert N random test participants
+// Body: { count: number }   (default 200, max 1000)
+// ============================================================
+router.post('/seed', requireAdminAPI, (req, res) => {
+    const db = require('../database/db');
+    const { generateParticipants } = require('../utils/seedData');
+
+    const requested = parseInt(req.body && req.body.count, 10);
+    const count = Number.isFinite(requested) && requested > 0 ? Math.min(requested, 1000) : 200;
+
+    // Find the next available TEST sequence so repeated seeds don't collide
+    const seqRow = db.prepare(`
+        SELECT employee_number FROM participants
+         WHERE employee_number LIKE 'TEST-%'
+         ORDER BY LENGTH(employee_number) DESC, employee_number DESC
+         LIMIT 1
+    `).get();
+
+    let startNum = 1;
+    if (seqRow && seqRow.employee_number) {
+        const m = seqRow.employee_number.match(/TEST-(\d+)/);
+        if (m) startNum = parseInt(m[1], 10) + 1;
+    }
+
+    const rows = generateParticipants(count, startNum);
+
+    const insertOne = db.prepare(`
+        INSERT OR IGNORE INTO participants (full_name, email, employee_number)
+        VALUES (@full_name, @email, @employee_number)
+    `);
+
+    const insertMany = db.transaction((arr) => {
+        let inserted = 0;
+        for (const r of arr) {
+            const info = insertOne.run(r);
+            if (info.changes === 1) inserted++;
+        }
+        return inserted;
+    });
+
+    try {
+        const inserted = insertMany(rows);
+        const skipped = count - inserted;
+        return res.json({
+            success: true,
+            message: `تمت إضافة ${inserted} مشاركًا اختباريًا${skipped > 0 ? ` (تم تخطي ${skipped} مكرر)` : ''}.`,
+            inserted,
+            skipped,
+            requested: count
+        });
+    } catch (err) {
+        console.error('[admin:seed]', err);
+        return res.status(500).json({
+            success: false,
+            message: 'تعذر إضافة بيانات الاختبار.'
+        });
+    }
+});
+
+// ============================================================
+// POST /api/admin/clear  -> wipe ALL data (participants + winners)
+// Body: { confirm: "DELETE-ALL" }   (must match exactly)
+// ============================================================
+router.post('/clear', requireAdminAPI, (req, res) => {
+    const db = require('../database/db');
+
+    const confirm = (req.body && req.body.confirm) || '';
+    if (confirm !== 'DELETE-ALL') {
+        return res.status(400).json({
+            success: false,
+            message: 'تأكيد الحذف غير صحيح.'
+        });
+    }
+
+    const wipe = db.transaction(() => {
+        db.prepare('DELETE FROM winners').run();
+        db.prepare('DELETE FROM participants').run();
+        // Reset autoincrement counters too
+        try {
+            db.prepare(`DELETE FROM sqlite_sequence WHERE name IN ('participants','winners')`).run();
+        } catch (_) { /* table may not exist if no inserts yet */ }
+    });
+
+    try {
+        wipe();
+        return res.json({
+            success: true,
+            message: 'تم حذف جميع المشاركين والفائزين.'
+        });
+    } catch (err) {
+        console.error('[admin:clear]', err);
+        return res.status(500).json({
+            success: false,
+            message: 'تعذر حذف البيانات.'
+        });
+    }
+});
+
+// ============================================================
+// POST /api/admin/clear-test  -> wipe ONLY test data (TEST-* employee numbers)
+// Keeps real participants intact.
+// ============================================================
+router.post('/clear-test', requireAdminAPI, (req, res) => {
+    const db = require('../database/db');
+
+    try {
+        const result = db.transaction(() => {
+            // First delete winners that reference test participants
+            db.prepare(`
+                DELETE FROM winners
+                 WHERE participant_id IN (
+                     SELECT id FROM participants WHERE employee_number LIKE 'TEST-%'
+                 )
+            `).run();
+            const r = db.prepare(`
+                DELETE FROM participants WHERE employee_number LIKE 'TEST-%'
+            `).run();
+            return r.changes;
+        })();
+
+        return res.json({
+            success: true,
+            message: `تم حذف ${result} مشاركًا اختباريًا.`,
+            deleted: result
+        });
+    } catch (err) {
+        console.error('[admin:clear-test]', err);
+        return res.status(500).json({
+            success: false,
+            message: 'تعذر حذف بيانات الاختبار.'
+        });
+    }
+});
+
 module.exports = router;

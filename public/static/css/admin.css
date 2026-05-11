@@ -393,3 +393,74 @@ html, body {
     text-transform: uppercase;
     color: var(--accent);
 }
+
+/* ============ Danger Panel (test tools) ============ */
+.danger-panel {
+    border: 1px solid rgba(192, 57, 43, 0.20);
+    background: linear-gradient(180deg, rgba(255,250,250,1) 0%, var(--surface) 100%);
+}
+.danger-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 0;
+}
+.danger-actions .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+.btn.solid-info {
+    background: linear-gradient(135deg, #1a3a7a, #2c4f9a);
+    color: #fff;
+    border: none;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(26, 58, 122, 0.25);
+}
+.btn.solid-info:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(26, 58, 122, 0.35); }
+.btn.solid-info:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn.ghost-warn {
+    background: #fff;
+    color: #9a6300;
+    border: 1.5px solid #f0c674;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn.ghost-warn:hover { background: #fff8eb; }
+
+.btn.ghost-danger {
+    background: #fff;
+    color: var(--error);
+    border: 1.5px solid #f5c2bc;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn.ghost-danger:hover { background: #fdecea; }
+
+.danger-note {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+}
+.danger-note code {
+    background: #f4f6fb;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: var(--primary);
+}
